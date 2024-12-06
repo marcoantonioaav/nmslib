@@ -17,3 +17,5 @@ similarity_search/tmpfile.bin
 *.egg-info/
 .idea
 dist/
+/python_bindings/.eggs
+/python_bindings/my_app/data

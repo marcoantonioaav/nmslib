@@ -23,6 +23,7 @@
 #include "factory/method/seqsearch.h"
 #include "factory/method/small_world_rand.h"
 #include "factory/method/hnsw.h"
+#include "factory/method/hcnsw.h"
 #include "factory/method/vptree.h"
 #include "factory/method/simple_inverted_index.h"
 
@@ -54,6 +55,9 @@ inline void initMethods() {
 
   REGISTER_METHOD_CREATOR(float,  METH_HNSW, CreateHnsw)
   REGISTER_METHOD_CREATOR(int,    METH_HNSW, CreateHnsw)
+
+  REGISTER_METHOD_CREATOR(float,  METH_HCNSW, CreateHcnsw)
+  REGISTER_METHOD_CREATOR(int,    METH_HCNSW, CreateHcnsw)
 
   // VP-tree, piecewise-polynomial approximation of the decision rule
   REGISTER_METHOD_CREATOR(int,    METH_VPTREE, CreateVPTree)
