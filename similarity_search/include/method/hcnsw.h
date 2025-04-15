@@ -475,14 +475,6 @@ namespace similarity {
         void SearchOld(KNNQuery<dist_t> *query, bool normalize);
         void SearchV1Merge(KNNQuery<dist_t> *query, bool normalize);
 
-        int getRandomLevel(double revSize)
-        {
-            // RandomReal is thread-safe
-            float r = -log(RandomReal<float>()) * revSize;
-            return (int)r;
-        }
-
-
         void NormalizeVect(float *v, size_t qty) {
             float sum = 0;
             for (int i = 0; i < qty; i++) {
@@ -511,7 +503,7 @@ namespace similarity {
                                               std::priority_queue<HcnswNodeDistCloser<dist_t>> &resultSet, HcnswNode *ep,
                                               int level) const;
 
-        void add(const Space<dist_t> *space, HcnswNode *newElement);
+        void add(const Space<dist_t> *space, HcnswNode *newElement, int id_data);
         void addToElementListSynchronized(HcnswNode *newElement);
 
         void link(HcnswNode *first, HcnswNode *second, int level, const Space<dist_t> *space, int delaunay_type)
@@ -538,6 +530,8 @@ namespace similarity {
         int maxlevel_;
         unsigned int enterpointId_;
         unsigned int totalElementsStored_;
+        std::string levels_file_;
+        std::vector<int> clustered_levels_;
 
         ObjectVector data_rearranged_;
 

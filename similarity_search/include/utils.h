@@ -128,6 +128,19 @@ inline T RandomReal() {
     return distr(getThreadLocalRandomGenerator()); 
 }
 
+inline RandomGeneratorType& getThreadLocalRandomGenerator2(size_t seed) {
+  static thread_local RandomGeneratorType  randomGen(seed);
+
+  return randomGen;
+}
+
+template <class T>
+inline T RandomReal2(size_t seed) {
+    static thread_local std::uniform_real_distribution<T> distr(0, 1);
+
+    return distr(getThreadLocalRandomGenerator2(seed)); 
+}
+
 void RStrip(char* str);
 
 template <typename dist_t>

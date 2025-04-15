@@ -1,4 +1,5 @@
 import numpy as np
+import h5py
 
 np.random.seed(0)
 
@@ -8,6 +9,13 @@ class Dataset():
         self.test_embeddings = []
         self.test_neighbors = []
         self.pca_db = []
+        
+    def load(self, name):
+        if name == "sift1m":
+            self.load_from_tfds(name)
+        else:
+            self.load_from_hdf5(name)
+        print(len(self.db))
 
     def load_from_tfds(self, name):
         self.test_embeddings = np.load(f"data/tfds_test_embeddings_{name}.npy").tolist()
@@ -17,6 +25,13 @@ class Dataset():
         self.db = [np.array(i) for i in self.db]
         self.pca_db = np.load(f"data/tfds_db_{name}2d.npy").tolist()
         self.pca_db = [np.array(i) for i in self.pca_db]
+        
+    def load_from_hdf5(self, name):
+        filename = f"data/{name}.hdf5"
+        with h5py.File(filename, "r") as file:
+            self.test_embeddings = list(file['test'])
+            self.test_neighbors = list(file['neighbors'])
+            self.db = list(file['train'])
 
     def get_test_size(self):
         return len(self.test_embeddings)

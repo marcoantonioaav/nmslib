@@ -207,6 +207,9 @@ namespace similarity {
         int skip_optimized_index = 0;
         pmgr.GetParamOptional("skip_optimized_index", skip_optimized_index, 0);
 
+        pmgr.GetParamOptional("seed", seed_, 0);
+        LOG(LIB_INFO) << "seed                = " << seed_;
+
         LOG(LIB_INFO) << "M                   = " << M_;
         LOG(LIB_INFO) << "indexThreadQty      = " << indexThreadQty_;
         LOG(LIB_INFO) << "efConstruction      = " << efConstruction_;

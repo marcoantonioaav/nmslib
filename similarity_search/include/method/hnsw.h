@@ -478,7 +478,7 @@ namespace similarity {
         int getRandomLevel(double revSize)
         {
             // RandomReal is thread-safe
-            float r = -log(RandomReal<float>()) * revSize;
+            float r = -log(RandomReal2<float>(seed_)) * revSize;
             return (int)r;
         }
 
@@ -538,6 +538,7 @@ namespace similarity {
         int maxlevel_;
         unsigned int enterpointId_;
         unsigned int totalElementsStored_;
+        size_t seed_;
 
         ObjectVector data_rearranged_;
 

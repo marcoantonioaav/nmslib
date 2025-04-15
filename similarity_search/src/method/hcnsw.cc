@@ -46,6 +46,8 @@
 #include <typeinfo>
 #include <vector>
 
+#include <fstream>
+
 #include "sort_arr_bi.h"
 #define MERGE_BUFFER_ALGO_SWITCH_THRESHOLD 100
 
@@ -207,6 +209,15 @@ namespace similarity {
         int skip_optimized_index = 0;
         pmgr.GetParamOptional("skip_optimized_index", skip_optimized_index, 0);
 
+        pmgr.GetParamOptional("levels_file", levels_file_, "teste");
+        std::string fileLine;
+        ifstream ReadFile(levels_file_);
+        while (getline(ReadFile, fileLine)) {
+            clustered_levels_.push_back(std::stoi(fileLine));
+        }
+
+        LOG(LIB_INFO) << "levels_file         = " << levels_file_;        
+
         LOG(LIB_INFO) << "M                   = " << M_;
         LOG(LIB_INFO) << "indexThreadQty      = " << indexThreadQty_;
         LOG(LIB_INFO) << "efConstruction      = " << efConstruction_;
@@ -226,7 +237,7 @@ namespace similarity {
         ElList_.resize(this->data_.size());
         // One entry should be added before all the threads are started, or else add() will not work properly
         HcnswNode *first = new HcnswNode(this->data_[0], 0 /* id == 0 */);
-        first->init(getRandomLevel(mult_), maxM_, maxM0_);
+        first->init(clustered_levels_.at(0), maxM_, maxM0_);
         maxlevel_ = first->level;
         enterpoint_ = first;
         ElList_[0] = first;
@@ -237,7 +248,7 @@ namespace similarity {
 
         ParallelFor(1, this->data_.size(), indexThreadQty_, [&](int id, int threadId) {
             HcnswNode *node = new HcnswNode(this->data_[id], id);
-            add(&space_, node);
+            add(&space_, node, id);
             {
                 unique_lock<mutex> lock(ElListGuard_);
                 ElList_[id] = node;
@@ -253,7 +264,7 @@ namespace similarity {
             temp.swap(ElList_);
             ElList_.resize(this->data_.size());
             first = new HcnswNode(this->data_[0], 0 /* id == 0 */);
-            first->init(getRandomLevel(mult_), maxM_, maxM0_);
+            first->init(clustered_levels_.at(0), maxM_, maxM0_);
             maxlevel_ = first->level;
             enterpoint_ = first;
             ElList_[0] = first;
@@ -265,7 +276,7 @@ namespace similarity {
                 // parallelfor, this might not make a difference
                 int id = this->data_.size() - pos_id;
                 HcnswNode *node = new HcnswNode(this->data_[id], id);
-                add(&space_, node);
+                add(&space_, node, id);
                 {
                     unique_lock<mutex> lock(ElListGuard_);
                     ElList_[id] = node;
@@ -533,9 +544,9 @@ namespace similarity {
 
     template <typename dist_t>
     void
-    Hcnsw<dist_t>::add(const Space<dist_t> *space, HcnswNode *NewElement)
+    Hcnsw<dist_t>::add(const Space<dist_t> *space, HcnswNode *NewElement, int id_data)
     {
-        int curlevel = getRandomLevel(mult_);
+        int curlevel = clustered_levels_.at(id_data);
         unique_lock<mutex> *lock = nullptr;
         if (curlevel > maxlevel_)
             lock = new unique_lock<mutex>(MaxLevelGuard_);
