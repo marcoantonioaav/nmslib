@@ -64,7 +64,7 @@ namespace similarity {
         dist_t curdist = (fstdistfunc_(
             pVectq, (float *)(data_level0_memory_ + enterpointId_ * memoryPerObject_ + offsetData_ + 16), qty, TmpRes));
 
-        for (int i = maxlevel1; i > 0; i--) {
+        for (int i = maxlevel1; i > 1; i--) { // Stacked NSW
             bool changed = true;
             while (changed) {
                 changed = false;
@@ -113,7 +113,7 @@ namespace similarity {
 
             candidateQueuei.pop();
             curNodeNum = currEv.element;
-            int *data = (int *)(data_level0_memory_ + curNodeNum * memoryPerObject_ + offsetLevel0_);
+            int *data = (int *)(linkLists_[curNodeNum]); // Stacked NSW
             int size = *data;
             PREFETCH((char *)(massVisited + *(data + 1)), _MM_HINT_T0);
             PREFETCH((char *)(massVisited + *(data + 1) + 64), _MM_HINT_T0);
@@ -170,7 +170,7 @@ namespace similarity {
         dist_t curdist = (fstdistfunc_(
             pVectq, (float *)(data_level0_memory_ + enterpointId_ * memoryPerObject_ + offsetData_ + 16), qty, TmpRes));
 
-        for (int i = maxlevel1; i > 0; i--) {
+        for (int i = maxlevel1; i > 1; i--) { // Stacked NSW
             bool changed = true;
             while (changed) {
                 changed = false;
@@ -218,7 +218,7 @@ namespace similarity {
             size_t itemQty = 0;
             dist_t topKey = sortedArr.top_key();
 
-            int *data = (int *)(data_level0_memory_ + curNodeNum * memoryPerObject_ + offsetLevel0_);
+            int *data = (int *)(linkLists_[curNodeNum]); // Stacked NSW
             int size = *data;
             PREFETCH((char *)(massVisited + *(data + 1)), _MM_HINT_T0);
             PREFETCH((char *)(massVisited + *(data + 1) + 64), _MM_HINT_T0);

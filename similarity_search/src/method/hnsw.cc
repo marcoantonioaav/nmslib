@@ -542,6 +542,8 @@ namespace similarity {
 
         NewElement->init(curlevel, maxM_, maxM0_);
 
+        if(curlevel == 0) return;//  Stacked NSW
+
         int maxlevelcopy = maxlevel_;
         HnswNode *ep = enterpoint_;
         if (curlevel < maxlevelcopy) {
@@ -1090,7 +1092,7 @@ namespace similarity {
         dist_t d = query->DistanceObjLeft(currObj);
         dist_t curdist = d;
         HnswNode *curNode = provider;
-        for (int i = maxlevel1; i > 0; i--) {
+        for (int i = maxlevel1; i > 1; i--) { // Stacked NSW
             bool changed = true;
             while (changed) {
                 changed = false;
@@ -1139,7 +1141,7 @@ namespace similarity {
             HnswNode *initNode = currEv.getMSWNodeHier();
             candidateQueue.pop();
 
-            const vector<HnswNode *> &neighbor = (initNode)->getAllFriends(0);
+            const vector<HnswNode *> &neighbor = (initNode)->getAllFriends(1); // Stacked NSW
 
             size_t curId;
 
@@ -1188,7 +1190,7 @@ namespace similarity {
         dist_t d = query->DistanceObjLeft(currObj);
         dist_t curdist = d;
         HnswNode *curNode = provider;
-        for (int i = maxlevel1; i > 0; i--) {
+        for (int i = maxlevel1; i > 1; i--) { // Stacked NSW
             bool changed = true;
             while (changed) {
                 changed = false;
@@ -1236,7 +1238,7 @@ namespace similarity {
             size_t itemQty = 0;
             dist_t topKey = sortedArr.top_key();
 
-            const vector<HnswNode *> &neighbor = (initNode)->getAllFriends(0);
+            const vector<HnswNode *> &neighbor = (initNode)->getAllFriends(1); // Stacked NSW
 
             size_t curId;
 
